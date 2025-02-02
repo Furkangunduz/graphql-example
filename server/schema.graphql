@@ -1,0 +1,26 @@
+type Query {
+  jobs: [Job]
+}
+
+# A company that is hiring
+type Company {
+  id: ID!
+  # The company name
+  name: String
+  # The company description
+  description: String
+}
+
+# A job posting
+type Job {
+  # The unique identifier
+  id: ID!
+  #ISO 8601 date string
+  date: String
+  #The job title
+  title: String
+  #The job description
+  description: String
+  #The company that is hiring
+  company: Company
+}
