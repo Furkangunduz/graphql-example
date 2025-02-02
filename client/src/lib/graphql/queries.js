@@ -5,7 +5,7 @@ const client = new GraphQLClient('http://localhost:9000/graphql');
 export async function getJobs() {
   const query = gql`
     query {
-      job {
+      jobs {
         date
         description
         id
