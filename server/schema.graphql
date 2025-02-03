@@ -1,6 +1,9 @@
 type Query {
   jobs: [Job]
   job(id: ID!): Job
+
+  company(id: ID!): Company
+  companies: [Company]
 }
 
 # A company that is hiring
