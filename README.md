@@ -1,5 +1,30 @@
 # GraphQL Job Board
 
-This is a project used in the [GraphQL by Example](https://www.udemy.com/course/graphql-by-example/?referralCode=7ACEB04674F000BAC061) course.
+A full-stack job board application built with GraphQL, Apollo Server, and React. This project demonstrates the implementation of a modern
+GraphQL API with a React frontend.
 
-It uses Apollo Server with Express, and GraphQL-Request and Apollo Client as GraphQL clients. The application is used to explain queries, mutations, custom object types, authentication, etc.
+## Features
+
+- Browse job listings
+- View detailed job information
+- Post new job listings
+- Authentication system
+- GraphQL API with Apollo Server
+- React frontend with Apollo Client
+
+## Tech Stack
+
+### Backend
+
+- Node.js
+- Express
+- Apollo Server
+- GraphQL
+- Authentication with JSON Web Tokens
+
+### Frontend
+
+- React
+- Apollo Client
+- GraphQL Request
+- Modern UI components

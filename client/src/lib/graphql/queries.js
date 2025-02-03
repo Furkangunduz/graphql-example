@@ -1,6 +1,15 @@
 import { gql, GraphQLClient } from 'graphql-request';
+import { getAccessToken } from '../auth';
 
-const client = new GraphQLClient('http://localhost:9000/graphql');
+const client = new GraphQLClient('http://localhost:9000/graphql', {
+  headers: () => {
+    const token = getAccessToken();
+
+    return {
+      authorization: token ? `Bearer ${token}` : '',
+    };
+  },
+});
 
 export async function createJob({ title, description }) {
   const mutation = gql`
