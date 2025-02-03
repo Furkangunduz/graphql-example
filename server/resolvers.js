@@ -26,16 +26,15 @@ export const resolvers = {
   },
 
   Mutation: {
-    createJob: async (_root, { input: { title, description } }, context) => {
-      const isAuthenticated = context.auth;
+    createJob: async (_root, { input: { title, description } }, { auth, user }) => {
+      const isAuthenticated = auth;
 
       if (!isAuthenticated) {
         throw notAuthenticatedError('You must be authenticated to create a job');
       }
 
-      const companyId = 'FjcJCHJALA4i';
+      const companyId = user.companyId;
 
-      // First check if company exists
       const company = await getCompany(companyId);
       if (!company) {
         throw new GraphQLError(`Company with id ${companyId} does not exist`, {
@@ -52,14 +51,13 @@ export const resolvers = {
 
       return job;
     },
-    updateJob: async (_root, { id, input: { title, description } }, context) => {
-      const isAuthenticated = context.auth;
+    updateJob: async (_root, { id, input: { title, description } }, { auth, user }) => {
+      const isAuthenticated = auth;
 
       if (!isAuthenticated) {
         throw notAuthenticatedError('You must be authenticated to create a job');
       }
 
-      console.log('updateJob', id, title, description);
       const job = await getJob(id);
       if (!job) {
         throw notFoundError(`Job with id ${id} not found`);
@@ -73,8 +71,8 @@ export const resolvers = {
 
       return updated;
     },
-    deleteJob: async (_root, { id }) => {
-      const isAuthenticated = context.auth;
+    deleteJob: async (_root, { id }, { auth, user }) => {
+      const isAuthenticated = auth;
 
       if (!isAuthenticated) {
         throw notAuthenticatedError('You must be authenticated to create a job');

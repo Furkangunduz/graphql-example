@@ -4,6 +4,7 @@ import cors from 'cors';
 import express from 'express';
 import { readFile } from 'node:fs/promises';
 import { authMiddleware, handleLogin } from './auth.js';
+import { getUser } from './db/users.js';
 import { resolvers } from './resolvers.js';
 
 const PORT = 9000;
@@ -17,9 +18,13 @@ const apolloServer = new ApolloServer({
 });
 await apolloServer.start();
 
-function getContext({ req }) {
+async function getContext({ req }) {
+  const id = req?.auth?.sub;
+  const user = await getUser(id);
+
   return {
     auth: req?.auth ?? null,
+    user,
   };
 }
 
