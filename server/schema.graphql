@@ -8,6 +8,8 @@ type Query {
 
 type Mutation {
   createJob(input: createJobInput!): Job
+  updateJob(id: ID!, input: createJobInput!): Job
+  deleteJob(id: ID!): Job
 }
 
 # A company that is hiring

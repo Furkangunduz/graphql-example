@@ -1,6 +1,6 @@
 import { GraphQLError } from 'graphql';
 import { getCompanies, getCompany } from './db/companies.js';
-import { createJob as createJobDb, getJob, getJobs } from './db/jobs.js';
+import { createJob as createJobDb, deleteJob, getJob, getJobs, updateJob } from './db/jobs.js';
 
 export const resolvers = {
   Query: {
@@ -42,6 +42,34 @@ export const resolvers = {
         throw new GraphQLError('Failed to create job', {
           extensions: { code: 'INTERNAL_SERVER_ERROR' },
         });
+      }
+
+      return job;
+    },
+    updateJob: async (_root, { id, input: { title, description } }) => {
+      console.log('updateJob', id, title, description);
+      const job = await getJob(id);
+      if (!job) {
+        throw notFoundError(`Job with id ${id} not found`);
+      }
+
+      const updated = await updateJob({ id, title, description });
+
+      if (!updated) {
+        throw serverError('Failed to update job');
+      }
+
+      return updated;
+    },
+    deleteJob: async (_root, { id }) => {
+      const job = await getJob(id);
+      if (!job) {
+        throw notFoundError(`Job with id ${id} not found`);
+      }
+
+      const deleted = await deleteJob(id);
+      if (!deleted) {
+        throw serverError('Failed to delete job');
       }
 
       return job;
