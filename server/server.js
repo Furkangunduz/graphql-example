@@ -17,10 +17,16 @@ const apolloServer = new ApolloServer({
 });
 await apolloServer.start();
 
+function getContext({ req }) {
+  return {
+    auth: req?.auth ?? null,
+  };
+}
+
 app.use(cors(), express.json(), authMiddleware);
 app.post('/login', handleLogin);
 
-app.use('/graphql', expressMiddleware(apolloServer));
+app.use('/graphql', expressMiddleware(apolloServer, { context: getContext }));
 
 app.listen({ port: PORT }, () => {
   console.log(`Server running on port ${PORT}`);

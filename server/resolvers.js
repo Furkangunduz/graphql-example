@@ -26,7 +26,13 @@ export const resolvers = {
   },
 
   Mutation: {
-    createJob: async (_root, { input: { title, description } }) => {
+    createJob: async (_root, { input: { title, description } }, context) => {
+      const isAuthenticated = context.auth;
+
+      if (!isAuthenticated) {
+        throw notAuthenticatedError('You must be authenticated to create a job');
+      }
+
       const companyId = 'FjcJCHJALA4i';
 
       // First check if company exists
@@ -46,7 +52,13 @@ export const resolvers = {
 
       return job;
     },
-    updateJob: async (_root, { id, input: { title, description } }) => {
+    updateJob: async (_root, { id, input: { title, description } }, context) => {
+      const isAuthenticated = context.auth;
+
+      if (!isAuthenticated) {
+        throw notAuthenticatedError('You must be authenticated to create a job');
+      }
+
       console.log('updateJob', id, title, description);
       const job = await getJob(id);
       if (!job) {
@@ -62,6 +74,12 @@ export const resolvers = {
       return updated;
     },
     deleteJob: async (_root, { id }) => {
+      const isAuthenticated = context.auth;
+
+      if (!isAuthenticated) {
+        throw notAuthenticatedError('You must be authenticated to create a job');
+      }
+
       const job = await getJob(id);
       if (!job) {
         throw notFoundError(`Job with id ${id} not found`);
@@ -80,6 +98,14 @@ export const resolvers = {
     company: (job) => getCompany(job.companyId),
   },
 };
+
+function notAuthenticatedError(message) {
+  return new GraphQLError(message, {
+    extensions: {
+      code: 'UNAUTHENTICATED',
+    },
+  });
+}
 
 function serverError(message) {
   return new GraphQLError(message, {
