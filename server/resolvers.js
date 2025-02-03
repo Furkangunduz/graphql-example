@@ -1,20 +1,73 @@
+import { GraphQLError } from 'graphql';
 import { getCompanies, getCompany } from './db/companies.js';
-import { getJob, getJobs } from './db/jobs.js';
+import { createJob as createJobDb, getJob, getJobs } from './db/jobs.js';
 
 export const resolvers = {
   Query: {
     jobs: () => getJobs(),
-    job: (_root, { id }) => getJob(id),
+    job: async (_root, { id }) => {
+      const job = await getJob(id);
+      if (!job) {
+        throw notFoundError(`Job with id ${id} not found`);
+      }
+      return job;
+    },
 
     companies: () => getCompanies(),
-    company: (_root, { id }) => getCompany(id),
+    company: async (_root, { id }) => {
+      const company = await getCompany(id);
+
+      if (!company) {
+        throw notFoundError(`Company with id ${id} not found`);
+      }
+
+      return company;
+    },
   },
 
+  Mutation: {
+    createJob: async (_root, { input: { title, description } }) => {
+      const companyId = 'FjcJCHJALA4i';
+
+      // First check if company exists
+      const company = await getCompany(companyId);
+      if (!company) {
+        throw new GraphQLError(`Company with id ${companyId} does not exist`, {
+          extensions: { code: 'BAD_USER_INPUT' },
+        });
+      }
+
+      const job = await createJobDb({ title, description, companyId });
+      if (!job) {
+        throw new GraphQLError('Failed to create job', {
+          extensions: { code: 'INTERNAL_SERVER_ERROR' },
+        });
+      }
+
+      return job;
+    },
+  },
   Job: {
     date: (job) => toIsoDate(job.createdAt),
     company: (job) => getCompany(job.companyId),
   },
 };
+
+function serverError(message) {
+  return new GraphQLError(message, {
+    extensions: {
+      code: 'INTERNAL_SERVER_ERROR',
+    },
+  });
+}
+
+function notFoundError(message) {
+  return new GraphQLError(message, {
+    extensions: {
+      code: 'NOT_FOUND',
+    },
+  });
+}
 
 function toIsoDate(value) {
   return value.slice(0, 'yyyy-mm-dd'.length);
