@@ -20,7 +20,7 @@ await apolloServer.start();
 
 async function getContext({ req }) {
   const id = req?.auth?.sub;
-  const user = await getUser(id);
+  const user = id ? await getUser(id) : null;
 
   return {
     auth: req?.auth ?? null,
