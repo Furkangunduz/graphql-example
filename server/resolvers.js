@@ -83,7 +83,7 @@ export const resolvers = {
         throw notFoundError(`Job with id ${id} not found`);
       }
 
-      const deleted = await deleteJob(id);
+      const deleted = await deleteJob(id, user.companyId);
       if (!deleted) {
         throw serverError('Failed to delete job');
       }
