@@ -1,22 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from '@apollo/client';
 import { useParams } from 'react-router';
-import { getCompany } from '../lib/graphql/queries';
+import { companyDetailQuery } from '../lib/graphql/queries';
 
 function CompanyPage() {
-  const [company, setCompany] = useState(null);
   const { companyId } = useParams();
+  console.log(companyId);
 
-  useEffect(() => {
-    getCompany(companyId).then((company) => setCompany(company));
-  }, [companyId]);
+  const { data, loading, error } = useQuery(companyDetailQuery, {
+    variables: { id: companyId },
+  });
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error.message}</p>;
+  }
 
   return (
-    company && (
-      <div>
-        <h1 className='title'>{company.name}</h1>
-        <div className='box'>{company.description}</div>
-      </div>
-    )
+    <div>
+      <h1 className='title'>{data.company.name}</h1>
+      <div className='box'>{data.company.description}</div>
+    </div>
   );
 }
 
